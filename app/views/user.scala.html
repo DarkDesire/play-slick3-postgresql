@@ -1,0 +1,12 @@
+@(services: List[FavouriteService])
+
+@main("All favourite services for userId: @services.head.userId") {
+    <button id="back"><a href="@routes.Application.index"> Back </a></button>
+    <h2>All favourite services for userId: @services.head.userId</h2>
+    <table>
+      <tr><th>ServiceId </th></tr>
+      @for(service <- services){
+      <tr><td>@service.serviceId</td></tr>
+      }
+    </table>
+}

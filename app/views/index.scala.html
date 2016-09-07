@@ -1,0 +1,46 @@
+@(services: List[FavouriteService])
+
+@main("Favourite services") {
+  <h2>Insert a favourite service here:</h2>
+
+  <form id="target">
+    <input name="userId" type="number" placeholder="enter userId..."/>
+    <input name="serviceId" type="number" placeholder="enter serviceId..."/>
+    <input type="submit"/>
+  </form>
+
+  <h2>All available users:</h2>
+
+  @if(services.isEmpty) {
+    <p>Didn't find any records</p>
+  } else {
+    <table>
+      <tr><th>UserId</th></tr>
+      @for(service <- services){
+      <tr><td><a href="@routes.Application.findAll(service.userId)">@service.userId</a></td></tr>
+      }
+    </table>
+  }
+
+
+<script>
+  $( "#target" ).submit(function( event ) {
+  var userId = $('#target').find('input[name="userId"]').val();
+  var serviceId = $('#target').find('input[name="serviceId"]').val();
+  var apiUrl = "/users/"+userId+"/favouriteServices/"+serviceId
+  console.log(apiUrl);
+  $.ajax({
+    type: "PUT",
+    url: apiUrl,
+    success: function(data) {
+      $('body').html(data)
+    },
+    error:  function(xhr, str){
+      alert('Возникла ошибка: ' + xhr.responseCode);
+    }
+  });
+  event.preventDefault();
+});
+</script>
+    
+}
