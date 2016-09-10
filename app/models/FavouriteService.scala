@@ -23,36 +23,26 @@ class FavouriteServiceRepo @Inject()(protected val dbConfigProvider: DatabaseCon
 
   private val FavouriteServices = TableQuery[FavouriteServicesTable]
 
-  private def _findAllUsers: Query[FavouriteServicesTable, FavouriteService, List] =
-    FavouriteServices.distinctOn(_.userId).to[List]
+  private def _findAll: Query[FavouriteServicesTable, FavouriteService, List] =
+    FavouriteServices.to[List]
+  def findAll: Future[List[FavouriteService]] = 
+    db.run(_findAll.result)
 
   private def _findAllByUserId(userId:Int): Query[FavouriteServicesTable, FavouriteService, List] =
     FavouriteServices.filter(_.userId === userId).to[List]
+  def findAllByUserId(userId:Int): Future[List[FavouriteService]] =
+    db.run(_findAllByUserId(userId).result)
 
   private def _findAllByUserIdAndServiceId(userId:Int, serviceId:Int): Query[FavouriteServicesTable, FavouriteService, List] =
-    _findAllByUserId(userId).filter(_.serviceId === serviceId) // complicated filter?? is it correct way?
-
-  def add(favouriteService: FavouriteService): Future[Int] = {
-    db.run(FavouriteServices += favouriteService)
-  }
-
-  def findAll: Future[List[FavouriteService]] = {
-    db.run(_findAllUsers.result)
-  }
-  def findAllByUserId(userId:Int): Future[List[FavouriteService]] = {
-    db.run(_findAllByUserId(userId).result)
-  }
-
-  def findAllByUserIdAndServiceId(userId:Int, serviceId:Int): Future[List[FavouriteService]] = {
+    _findAllByUserId(userId).filter(_.serviceId === serviceId) // is it correct way? for multiple filtering
+  def findAllByUserIdAndServiceId(userId:Int, serviceId:Int): Future[List[FavouriteService]] =
     db.run(_findAllByUserIdAndServiceId(userId,serviceId).result)
-  }
 
-  def delete(userId:Int, serviceId:Int): Future[Int] = {
-    val query = _findAllByUserIdAndServiceId(userId,serviceId)
-    val interaction = query.delete
+  def add(favouriteService: FavouriteService): Future[Int] =
+    db.run(FavouriteServices += favouriteService)
 
-    db.run(interaction.transactionally)
-  }
+  def delete(userId:Int, serviceId:Int): Future[Int] =
+    db.run(_findAllByUserIdAndServiceId(userId,serviceId).delete)
 
   private class FavouriteServicesTable(tag: Tag) extends Table[FavouriteService](tag, "FavouriteService") {
 

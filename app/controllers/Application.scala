@@ -10,8 +10,8 @@ class Application @Inject()(favouriteServiceRepo: FavouriteServiceRepo) extends 
 
   def index = Action.async { implicit rs =>
     favouriteServiceRepo.findAll
-      .map(service => Ok(views.html.index( service.groupBy(_.userId).map(_._2.head).toList)))
-    // as for me it's lifehack, because filtering after received all data
+      .map(service => Ok(views.html.index( service.groupBy(_.userId).map(_._2.head).toList.sortBy(_.userId))))
+    // as for me it's lifehack, because filtering after received all data!!!!!!!!
     // only for demo purpose, don't do that
   }
   //   PUT     /users/:userId/favouriteServices/:serviceId
