@@ -3,13 +3,7 @@ package models
 import javax.inject.Inject
 
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.Json
 import slick.driver.JdbcProfile
-
-import play.api.data._
-import play.api.data.Forms._
-import play.api.libs.json.Json
-import play.api.libs.json.Json._
 
 import scala.concurrent.Future
 
